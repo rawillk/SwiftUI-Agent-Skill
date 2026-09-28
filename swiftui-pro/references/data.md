@@ -15,6 +15,12 @@ These rules help ensure code is efficient and works well in the long term.
 ## Local state
 
 - `@State` should be marked `private` and only owned by the view that created it.
+- **As of Xcode 27, `@State` is a macro rather than a property wrapper**, and the change is back-deployed to iOS 17 / macOS 14 and aligned releases — so it applies whatever the deployment target, as soon as the project builds with Xcode 27. It is source-compatible "with exceptions", and the exceptions are what to flag:
+  - A property must not have both a default value at its declaration *and* an assignment in `init`. The declaration's value is discarded, and referring to `self` in `init` now errors. Remove the default value: `@State private var page: StickerPage` then assign in `init`.
+  - `@State` no longer composes with other property wrappers.
+  - Type inference through `@State` in generic contexts is weaker, so an explicit type annotation is sometimes now required.
+  - The memberwise initializer is no longer synthesized for a type with a `private` `@State` property.
+  - The upside is that it fixes the oldest `@State` trap: the stored value is now initialized lazily and **only once** for the lifetime of the view, so `@State private var model = ExpensiveModel()` no longer builds a throwaway instance on every `body` re-evaluation.
 - If a view stores a class instance that contains expensive-to-recompute data, e.g. `CIContext`, it can be stored using `@State` even though it is not an observable object. This effectively uses `@State` as a cache – storing something persistently, but not doing any change tracking on it since it's not an observable object.
 
 

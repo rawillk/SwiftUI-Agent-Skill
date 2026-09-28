@@ -54,3 +54,20 @@ var tileColor: Color {
 - `Task.detached()` is often a bad idea. Check any usage extremely carefully.
 
 For more help with Swift concurrency, suggest the [Swift Concurrency Pro agent skill](https://github.com/twostraws/swift-concurrency-agent-skill).
+
+
+## New in Swift 6.4 (Xcode 27)
+
+- **Availability shorthand.** Apple's OS version numbers are aligned from 26.0, so one `anyAppleOS` token now stands for iOS, macOS, watchOS, tvOS and visionOS (macCatalyst and the visionOS app extension inherit from their parents). Prefer `@available(anyAppleOS 26, *)` to `@available(iOS 26, macOS 26, watchOS 26, tvOS 26, visionOS 26, *)`; it works in `@available`, `#available` and `#if os(...)`. A version below 26.0 is invalid, so pre-26 availability still has to be spelled out per platform. Carve-outs combine — the most specific platform wins, e.g. `@available(anyAppleOS 26.0, watchOS 26.4, *)`.
+- **`defer` can now await** (SE-0493), so cleanup that needs `await` no longer has to be duplicated down every exit path or wrapped in a `do`/`catch` that rethrows. Flag hand-written "cleanup on both paths" code in async functions.
+- **Cleanup that must not be cancelled** goes in `withTaskCancellationShield { }` (SE-0504). The usual case is a rollback or a close inside a `defer` in a task that was just cancelled, which previously returned immediately and left the resource open.
+- **An unused throwing `Task` is now a warning** (SE-0520): "Unstructured throwing task was not used, which may accidentally ignore errors." `Task { try await thing() }` whose handle nobody awaits swallows the error. Handle it inside the closure, or keep the handle and await it.
+- **Typed task failures.** `Task` initializers can carry a concrete error type: `let task: Task<String, URLError>`. Prefer this to `Task<String, Error>` when the failure is known.
+- **`Result` has an async initializer** (SE-0530): `let result = await Result { try await load() }`, which replaces the `do`/`catch`-into-a-`Result` dance.
+- **`weak let`** (SE-0481, Swift 6.3) makes an immutable weak reference legal, so a `Sendable` final class can hold `weak let delegate:` without an unchecked escape hatch.
+- **`~Sendable`** (SE-0518) marks a type deliberately not sendable, which documents the intent and stops inference from making it `Sendable` later by accident.
+- **Optional `some`/`any` need no parentheses** (SE-0521): `some Rocket?` rather than `(some Rocket)?`.
+- **Module selectors** (SE-0491) disambiguate colliding names across modules with `::`, e.g. `MyModule::Configuration`, instead of renaming a type to dodge the clash.
+- **`@diagnose`** (SE-0522) gives source-level control over which compiler warnings are raised, in place of a project-wide flag.
+- Performance and memory-safety additions worth knowing but rarely needed in app-level SwiftUI code: `Ref`/`MutableRef` for borrowing without copying (SE-0519), `UniqueArray` (SE-0527) and `UniqueBox` (SE-0517), `Equatable`/`Comparable`/`Hashable` for noncopyable types, and the `Iterable` protocol (SE-0516), which lets `for`-`in` borrow elements of noncopyable types such as `Span` and `InlineArray`.
+- Foundation got faster on its own, most notably URL parsing (up to 4x). That is one more reason to prefer Foundation's own API — `URL.documentsDirectory`, `appending(path:)` — over hand-rolled string work.

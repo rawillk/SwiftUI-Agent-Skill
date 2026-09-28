@@ -37,3 +37,19 @@ Text("\(red)\(blue)")
 ## Using ObservableObject
 
 If using `ObservableObject` is absolutely required – for example if you are trying to create a debouncer using a Combine publisher – you should always make sure `import Combine` is added. This was previously provided through SwiftUI, but that is no longer the case.
+
+
+## New in the iOS 27 SDK (Xcode 27)
+
+These apply when the project targets iOS 27 or later, except where noted.
+
+- `PreviewProvider` and its associated modifiers are now formally **deprecated**, not merely legacy. Migrate to `#Preview` while it is still only a deprecation.
+- `swipeActions()` is no longer exclusive to `List`. Applying `swipeActionsContainer()` to a `LazyVStack`, `LazyVGrid` or a custom `Layout` inside a `ScrollView` lets its rows carry swipe actions, coordinated across the container so only one is open at a time. Flag hand-rolled `DragGesture` row-swipe implementations and third-party swipe-row packages.
+- Drag-reordering is now declarative: `reorderable()` on the `ForEach`, plus `reorderContainer(for:)` on the container, which hands back a `ReorderDifference` to apply to the model. This reaches `LazyVGrid` and watchOS, where `onMove(perform:)` was never available. Prefer it to a hand-built drag-and-drop reorder.
+- Toolbars gained overflow control: `visibilityPriority()` says which items survive a squeeze, `ToolbarOverflowMenu` groups the ones that should collapse into an overflow menu, `.topBarPinnedTrailing` pins an item so it never collapses, and `toolbarMinimizeBehavior(.onScrollDown, for: .navigationBar)` shrinks the bar as content scrolls. Flag manual `if` branching on size class to hide toolbar items.
+- `Tab(role: .prominent)` singles out one tab — a cart, a compose action — for prominent placement, instead of faking it with an overlay button on top of the tab bar.
+- `AsyncImage` now caches by default, honouring the server's HTTP cache headers. `AsyncImage(request:)` takes a `URLRequest` so the cache policy can be set, and `asyncImageURLSession()` supplies a session with a configured `URLCache`. Flag image-caching dependencies and hand-written `URLCache` wrappers that exist only to add this.
+- `appearsActive` is an environment value: read it to quiet a window's chrome when it is not the active one, rather than tracking scene phase by hand.
+- Document-based apps have a new protocol family: `Document`, with `ReadableDocument` (`readableDocumentTypes`, `DocumentReader`) and `WritableDocument` (`writableDocumentTypes`, `snapshot(contentType:)`, `writer(configuration:)`) and a nonisolated `write(snapshot:to:previous:progress:)`, plus `DocumentGroupLaunchScene`, `NewDocumentButton` and `DocumentCreationSource` for a custom creation screen. It offers direct disk access and snapshot diffing, so prefer it to `FileDocument`/`ReferenceFileDocument` in new code.
+- `@ContentBuilder` unifies SwiftUI's result builders behind one builder and one initializer path, which is where a good part of Xcode 27's type-checking speedup comes from. It is built on top of `ViewBuilder`, so it is **available at any deployment target**, and unlike `ViewBuilder` it does not constrain its contents to `View` — that makes it the right builder for your own content-producing helpers and SwiftUI-like DSLs.
+- The Liquid Glass refresh in this release needs no code changes. One thing worth flagging: menu items only show their icons when the label style allows it, so `labelStyle(.titleAndIcon)` may be needed on a `Menu`'s content.

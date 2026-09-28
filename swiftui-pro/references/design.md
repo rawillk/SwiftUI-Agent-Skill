@@ -30,3 +30,10 @@ Prefer to place standard fonts, sizes, colors, stack spacing, padding, rounding,
 - Avoid hard-coded values for padding and stack spacing unless specifically requested.
 - Avoid UIKit colors (`UIColor`) in SwiftUI code; use SwiftUI `Color` or asset catalog colors.
 - The font size `.caption2` is extremely small, and is generally best avoided. Even the font size `.caption` is on the small side, and should be used carefully.
+
+
+## Resizability (iOS 27)
+
+- iPhone apps are resizable from iOS 27, as iPad and Mac apps already were, which matters for iPhone Mirroring and for iPhone apps running on iPad. Treat every window as resizable at runtime.
+- Consequently, size decisions must come from the size classes or the container, not from the device: flag layout that branches on `UIDevice.current.userInterfaceIdiom` to choose sizes, columns or spacing. (Idiom is still the right question for genuinely device-shaped behaviour, and for the known SwiftUI quirk that a `NavigationSplitView` sidebar reports a compact horizontal size class on iPad.)
+- Xcode 27's Live Previews have resize handles, so this is testable without running on a device — resize the preview rather than trusting a fixed canvas.

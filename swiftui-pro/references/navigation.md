@@ -11,4 +11,5 @@
 - Always attach `confirmationDialog()` to the user interface that triggers the dialog. This allows Liquid Glass animations to move from the correct source.
 - If an alert has only a single “OK” button that does nothing but dismiss the alert, it can be omitted entirely: `.alert("Dismiss Me", isPresented: $isShowingAlert) { }`.
 - If a sheet is designed to present an optional piece of data, prefer `sheet(item:)` over `sheet(isPresented:)` so the optional is safely unwrapped.
+- From iOS 27 the same shape exists for the other two: `alert(_:item:actions:)` and `confirmationDialog(_:item:actions:)`. Prefer them over a `Bool` plus a separate optional `@State` holding the subject — that pair can disagree, and the body then has to force-unwrap or silently render an empty dialog.
 - When using `sheet(item:)` with a view that accepts the item as its only initializer parameter, prefer `sheet(item: $someItem, content: SomeView.init)` over `sheet(item: $someItem) { someItem in SomeView(item: someItem) }`.
