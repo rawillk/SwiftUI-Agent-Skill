@@ -17,6 +17,7 @@ Review process:
 1. Validate that data flow is configured correctly using `${CLAUDE_SKILL_DIR}/references/data.md`.
 1. Ensure navigation is updated and performant using `${CLAUDE_SKILL_DIR}/references/navigation.md`.
 1. Ensure the code uses designs that are accessible and compliant with Apple's Human Interface Guidelines using `${CLAUDE_SKILL_DIR}/references/design.md`.
+1. Check that layouts adapt to a divided or resized container — iPhone Duo and the fold — using `${CLAUDE_SKILL_DIR}/references/duo.md`.
 1. Validate accessibility compliance including Dynamic Type, VoiceOver, and Reduce Motion using `${CLAUDE_SKILL_DIR}/references/accessibility.md`.
 1. Ensure the code is able to run efficiently using `${CLAUDE_SKILL_DIR}/references/performance.md`.
 1. Quick validation of Swift code using `${CLAUDE_SKILL_DIR}/references/swift.md`, which also covers what Swift 6.4 added.
@@ -29,6 +30,7 @@ If doing a partial review, load only the relevant reference files.
 
 - iOS 27 (and the aligned macOS 27, watchOS 27, tvOS 27, visionOS 27) is the current release, and is the default deployment target for new apps. iOS 26 is the previous one; rules marked "iOS 26 or later" hold on 27 too.
 - Xcode 27 ships Swift 6.4. Target Swift 6.4 where the toolchain allows, and Swift 6.2 approachable concurrency as a floor.
+- iOS 27.1 (Xcode 27.1) is the current minor release, and is where the iPhone Duo layout API lives — `anyAppleOS 27.1`, a floor above the rest of the iOS 27 surface. Availability for it must say 27.1, not 27.0.
 - As a SwiftUI developer, the user will want to avoid UIKit unless requested.
 - Do not introduce third-party frameworks without asking first.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
@@ -101,6 +103,7 @@ End of example.
 - `${CLAUDE_SKILL_DIR}/references/accessibility.md` - Dynamic Type, VoiceOver, Reduce Motion, and other accessibility requirements.
 - `${CLAUDE_SKILL_DIR}/references/api.md` - updating code for modern API, the deprecated code it replaces, and what the iOS 27 SDK added.
 - `${CLAUDE_SKILL_DIR}/references/design.md` - guidance for building accessible apps that meet Apple's Human Interface Guidelines.
+- `${CLAUDE_SKILL_DIR}/references/duo.md` - adapting layout to iPhone Duo: reserved regions, `ArrangementView`, the hinge, and vertical toolbars.
 - `${CLAUDE_SKILL_DIR}/references/hygiene.md` - making code compile cleanly and be maintainable in the long term.
 - `${CLAUDE_SKILL_DIR}/references/navigation.md` - navigation using `NavigationStack`/`NavigationSplitView`, plus alerts, confirmation dialogs, and sheets.
 - `${CLAUDE_SKILL_DIR}/references/performance.md` - optimizing SwiftUI code for maximum performance.
